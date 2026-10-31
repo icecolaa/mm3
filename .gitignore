@@ -1,0 +1,24 @@
+# 生成物与大文件
+/outputs/
+/krea2-out/
+/wechat-draft/
+/docs-site/
+/krea2-local-workflow/
+/.tmp-handraw-style/
+/.work-together/
+
+# 日志与临时文件
+logs/
+*.log
+*.tmp
+*.bak
+
+# Python / Node
+__pycache__/
+*.pyc
+node_modules/
+
+# 系统文件
+Thumbs.db
+Desktop.ini
+.DS_Store

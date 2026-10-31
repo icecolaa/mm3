@@ -1,0 +1,44 @@
+{
+  "coordinator": "codex",
+  "engine": "qoder-cn",
+  "concurrency": 2,
+  "spec": "SPEC.md",
+  "fallback": false,
+  "tasks": [
+    {
+      "id": "qwen-image",
+      "title": "Qwen 图像生成部署包（Qoder CN）",
+      "engine": "qoder-cn",
+      "files": ["deploy/qwen-image"],
+      "dependsOn": [],
+      "prompt": "负责包 A：Qwen 图像生成部署包。用户所说的 qwen2.1 image 不是官方型号，请先澄清并映射到官方 Qwen-Image 系列。研究并覆盖：Qwen-Image（文生图）与 Qwen-Image-Edit（参考图编辑，含 2509 版本）在 ComfyUI 中的当前部署方式。核实 2026-10-29 的现状：官方仓库与模型卡、ComfyUI 原生支持与最低版本、10GB RTX 3080 可用的量化方案（GGUF/FP8 等，注明量化作者与仓库）、文本编码器（Qwen2.5-VL）、VAE、所需自定义节点；每个文件的精确名称、下载 URL、目标目录、近似大小；10GB 显存与 32GB 内存下的现实可行性、限制与 lowvram/block swap 参数；给出先装哪一个的明确推荐及理由（用户要求两者都调研）。产出 deploy/qwen-image/README.md、manifest.json、download-qwen-image.ps1。脚本要求：Windows PowerShell 5.1 兼容；只下载；-TargetRoot 默认 D:\\LocalAI\\image；-DryRun 只打印计划且零网络请求；使用 curl.exe -L --fail --retry 3 -C - 断点续传；已存在的文件跳过并提示；失败以非零退出码结束；不含安装、解压、驱动更新、pip、git 命令。严禁实际下载模型、安装软件、运行 ComfyUI 或占用 GPU；允许用 HEAD 请求核实链接与大小。禁止修改 deploy/qwen-image 之外的任何路径，禁止写 MEMORY.md 或共享记忆文件。结束后只汇报：变更路径、JSON/DryRun/语法检查命令与退出码、链接核验记录、未核实项、已知风险、下一步。",
+      "acceptance": [
+        "README 同时覆盖 Qwen-Image 与 Qwen-Image-Edit，并给出 10GB 显存下的明确首装推荐与理由",
+        "README 说明 qwen2.1 image 不是官方型号并映射到官方系列",
+        "manifest.json 可被 JSON.parse 解析，字段齐全，无占位符 URL",
+        "PowerShell 语法解析通过，-DryRun 零网络请求且退出码 0",
+        "README 含精确文件清单、目录布局、低显存启动参数、首发测试参数、验收清单与常见错误",
+        "所有外部结论附来源 URL 和访问日期，无法核实的标注未核实",
+        "除 deploy/qwen-image 外无文件改动，未执行下载或安装"
+      ]
+    },
+    {
+      "id": "minimax-h3",
+      "title": "MiniMax H3 视频部署包（WorkBuddy AI）",
+      "engine": "workbuddy-cn",
+      "files": ["deploy/minimax-h3"],
+      "dependsOn": [],
+      "prompt": "负责包 B：MiniMax H3 视频部署包。先读 SPEC.md、outputs/local-ai-plan-2026-10-29/README.md 第 5 节与 ALL-DATA-CHECKLIST.md，基于现有清单核实并定稿：MiniMax 官方 H3 仓库、Kijai 量化模型卡中 diffusion model / text encoder / ClipProj / VAE 的精确文件名与大小；ComfyUI 当前版本要求、驱动要求（CUDA 13 对应 580 系列）与 Portable 安装位置；两个插件（ComfyUI-ClipProj 0.1.13 及以上、ComfyUI-Spectrum-MiniMax-H3）与社区首尾帧工作流 JSON 的当前地址；在 Windows 11 + RTX 3080 10GB + 32GB 内存约束下写清 lowvram 启动参数与 608×352、124 帧、24fps、20 步的首次验收流程（连续 3 条、记录耗时与显存）；故障排查覆盖驱动/CUDA、缺节点、量化不识别、ClipProj KeyError: W、显存/内存不足、Spectrum；说明 FL2VA、Ref2VA、纯文生、单图生视频的输入差异，不给速度保证。产出 deploy/minimax-h3/README.md、manifest.json、download-minimax-h3.ps1。脚本要求：Windows PowerShell 5.1 兼容；只下载四个模型文件；-TargetRoot 默认 D:\\LocalAI\\video；-DryRun 只打印计划且零网络请求；使用 curl.exe -L --fail --retry 3 -C - 断点续传；已存在的文件跳过并提示；失败以非零退出码结束；不 clone、不安装依赖、不改驱动。严禁实际下载模型、git clone、安装、运行 ComfyUI 或占用 GPU；允许用 HEAD 请求核实链接与大小。禁止修改 deploy/minimax-h3 之外的任何路径，禁止写 MEMORY.md 或共享记忆文件。结束后只汇报：变更路径、JSON/DryRun/语法检查命令与退出码、链接核验记录、未核实项、已知风险、下一步。",
+      "acceptance": [
+        "README 的模型文件清单与来源为当前可核实状态，四个文件名称、大小、目标目录逐项列出",
+        "说明 ComfyUI 版本、驱动 580 要求、两个插件与工作流 JSON 地址",
+        "README 含 608×352、124 帧、24fps、20 步、连续 3 条的验收流程与记录项",
+        "manifest.json 可被 JSON.parse 解析，字段齐全，无占位符 URL",
+        "PowerShell 语法解析通过，-DryRun 零网络请求且退出码 0",
+        "故障排查覆盖驱动/CUDA、缺节点、量化不识别、ClipProj KeyError: W、显存/内存不足、Spectrum",
+        "所有外部结论附来源 URL 和访问日期，无法核实的标注未核实",
+        "除 deploy/minimax-h3 外无文件改动，未执行下载、克隆或安装"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "package": "qwen-image",
+  "title": "Qwen 图像生成 ComfyUI 部署包（Qwen-Image / Qwen-Image-Edit / Qwen-Image-2.1）",
+  "generated_at": "2026-10-29",
+  "verified_at": "2026-10-29",
+  "target_machine": "Windows 11 x64; NVIDIA RTX 3080 10GB; 32GB RAM; driver 560.94",
+  "target_root_default": "D:\\LocalAI\\image",
+  "default_bundle": "recommended",
+  "source_policy": {
+    "primary": "ModelScope 镜像（2026-10-29 在本机网络可访问，HEAD 返回 200）",
+    "official_reference": "Hugging Face 官方仓库 URL；本机网络无法直连 huggingface.co，文件路径与大小通过 hf-mirror API/HEAD 交叉核验",
+    "alternate": "hf-mirror.com 社区镜像",
+    "note": "下载脚本按 primary -> alternate 顺序尝试；官方 HF URL 仅作来源核对，不在默认下载顺序中。"
+  },
+  "bundles": {
+    "recommended": {
+      "title": "Qwen-Image-2.1 基础版（首选）",
+      "description": "7B DiT int8_convrot + Qwen3-VL 8B int8 编码器 + 2.1 VAE；一套权重同时覆盖文生图与参考图编辑。",
+      "file_count": 3,
+      "download_bytes": 17283091112,
+      "download_gib": 16.1,
+      "requires_custom_nodes": false,
+      "comfyui_min_version": "0.38.0"
+    },
+    "turbo": {
+      "title": "Qwen-Image-2.1 Turbo",
+      "description": "Turbo 主干 + 同一编码器/VAE；官方模板 8 步出图，适合先验证速度和显存。",
+      "file_count": 3,
+      "download_bytes": 17283095877,
+      "download_gib": 16.1,
+      "requires_custom_nodes": false,
+      "comfyui_min_version": "0.40.0"
+    },
+    "classic": {
+      "title": "Qwen-Image 20B 文生图（GGUF Q2_K）",
+      "description": "2025-08 的 20B 文生图模型 + Qwen2.5-VL 7B 编码器 + 原版 VAE；Apache-2.0，适合需要商用许可的场景。",
+      "file_count": 3,
+      "download_bytes": 16700995230,
+      "download_gib": 15.55,
+      "requires_custom_nodes": true,
+      "node_pack": "city96/ComfyUI-GGUF",
+      "comfyui_min_version": "0.3.49"
+    },
+    "edit2509": {
+      "title": "Qwen-Image-Edit-2509 20B（GGUF Q2_K）",
+      "description": "2025-09 的 20B 参考图编辑模型 + Qwen2.5-VL 7B 编码器 + 原版 VAE；Apache-2.0，支持 1-3 张参考图。",
+      "file_count": 3,
+      "download_bytes": 16785929886,
+      "download_gib": 15.63,
+      "requires_custom_nodes": true,
+      "node_pack": "city96/ComfyUI-GGUF",
+      "comfyui_min_version": "0.3.60"
+    },
+    "all": {
+      "title": "全部文件",
+      "description": "四个可用组合的全部去重文件；下载量约 45GiB，确认 D: 空间充足再使用。",
+      "file_count": 8,
+      "download_bytes": 48388327131,
+      "download_gib": 45.07,
+      "requires_custom_nodes": true,
+      "comfyui_min_version": "0.40.0"
+    }
+  },
+  "files": [
+    {
+      "id": "qwen21-dit-int8",
+      "filename": "qwen_image_2.1_int8_convrot.safetensors",
+      "role": "diffusion_model",
+      "architecture": "Qwen-Image-2.1 (7B visual generation component)",
+      "source_type": "official-comfyorg",
+      "source_type_note": "Comfy-Org 官方转换/打包仓库，非 Qwen 官方权重仓库",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "quantization": "int8_convrot",
+      "license": "Qwen Research License（非商业；商用需单独授权）",
+      "url": "https://modelscope.cn/models/Comfy-Org/Qwen-Image-2.1/resolve/master/diffusion_models/qwen_image_2.1_int8_convrot.safetensors",
+      "official_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/diffusion_models/qwen_image_2.1_int8_convrot.safetensors",
+      "alt_urls": [
+        "https://hf-mirror.com/Comfy-Org/Qwen-Image-2.1/resolve/main/diffusion_models/qwen_image_2.1_int8_convrot.safetensors"
+      ],
+      "target": "models/diffusion_models/qwen_image_2.1_int8_convrot.safetensors",
+      "size_bytes": 7256783064,
+      "size_gib": 6.76,
+      "bundles": ["recommended", "all"],
+      "required_for": "Qwen-Image-2.1 文生图与图像编辑（基础版）",
+      "notes": "官方模板默认 1024x1024、25 步、cfg 1.0、euler/simple；10GB 显存不要直接跑 2048。"
+    },
+    {
+      "id": "qwen21-dit-turbo-int8",
+      "filename": "qwen_image_2.1_turbo_int8_convrot.safetensors",
+      "role": "diffusion_model",
+      "architecture": "Qwen-Image-2.1 Turbo (7B visual generation component)",
+      "source_type": "official-comfyorg",
+      "source_type_note": "Comfy-Org 官方转换/打包仓库，非 Qwen 官方权重仓库",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "quantization": "int8_convrot",
+      "license": "Qwen Research License（非商业；商用需单独授权）",
+      "url": "https://modelscope.cn/models/Comfy-Org/Qwen-Image-2.1/resolve/master/diffusion_models/qwen_image_2.1_turbo_int8_convrot.safetensors",
+      "official_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/diffusion_models/qwen_image_2.1_turbo_int8_convrot.safetensors",
+      "alt_urls": [
+        "https://hf-mirror.com/Comfy-Org/Qwen-Image-2.1/resolve/main/diffusion_models/qwen_image_2.1_turbo_int8_convrot.safetensors"
+      ],
+      "target": "models/diffusion_models/qwen_image_2.1_turbo_int8_convrot.safetensors",
+      "size_bytes": 7256787829,
+      "size_gib": 6.76,
+      "bundles": ["turbo", "all"],
+      "required_for": "Qwen-Image-2.1 Turbo 文生图与图像编辑",
+      "notes": "Turbo 模板 8 步、cfg 1.0；需要 ComfyUI v0.40.0 及以上模板。"
+    },
+    {
+      "id": "qwen21-text-encoder-int8",
+      "filename": "qwen3vl_8b_int8_convrot.safetensors",
+      "role": "text_encoder",
+      "architecture": "Qwen3-VL 8B",
+      "source_type": "official-comfyorg",
+      "source_type_note": "Comfy-Org 官方转换/打包仓库，非 Qwen 官方权重仓库",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "quantization": "int8_convrot",
+      "license": "Qwen Research License（随 Qwen-Image-2.1 分发）",
+      "url": "https://modelscope.cn/models/Comfy-Org/Qwen-Image-2.1/resolve/master/text_encoders/qwen3vl_8b_int8_convrot.safetensors",
+      "official_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/text_encoders/qwen3vl_8b_int8_convrot.safetensors",
+      "alt_urls": [
+        "https://hf-mirror.com/Comfy-Org/Qwen-Image-2.1/resolve/main/text_encoders/qwen3vl_8b_int8_convrot.safetensors"
+      ],
+      "target": "models/text_encoders/qwen3vl_8b_int8_convrot.safetensors",
+      "size_bytes": 9350798360,
+      "size_gib": 8.71,
+      "bundles": ["recommended", "turbo", "all"],
+      "required_for": "Qwen-Image-2.1 文生图与图像编辑",
+      "notes": "CLIPLoader 的 type 选 qwen_image；8.71GiB 会在采样前占用/卸载，需按顺序加载，不能与 7B 主干同时常驻 10GB。"
+    },
+    {
+      "id": "qwen21-vae",
+      "filename": "qwen_image_2.1_vae_bf16.safetensors",
+      "role": "vae",
+      "architecture": "Qwen-Image-2.1 tiny VAE",
+      "source_type": "official-comfyorg",
+      "source_type_note": "Comfy-Org 官方转换/打包仓库，非 Qwen 官方权重仓库",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "quantization": "bf16",
+      "license": "Qwen Research License（随 Qwen-Image-2.1 分发）",
+      "url": "https://modelscope.cn/models/Comfy-Org/Qwen-Image-2.1/resolve/master/vae/qwen_image_2.1_vae_bf16.safetensors",
+      "official_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors",
+      "alt_urls": [
+        "https://hf-mirror.com/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors"
+      ],
+      "target": "models/vae/qwen_image_2.1_vae_bf16.safetensors",
+      "size_bytes": 675509688,
+      "size_gib": 0.63,
+      "bundles": ["recommended", "turbo", "all"],
+      "required_for": "Qwen-Image-2.1 文生图与图像编辑",
+      "notes": "2.1 tiny VAE；ComfyUI v0.38.0 起支持。不要混用 qwen_image_vae.safetensors（20B 系列）。"
+    },
+    {
+      "id": "qwen-image-gguf-q2k",
+      "filename": "qwen-image-Q2_K.gguf",
+      "role": "diffusion_model",
+      "architecture": "Qwen-Image (20B)",
+      "source_type": "community-quant",
+      "source_type_note": "社区 GGUF 量化；模型权重 Apache-2.0，量化文件由 city96 生成",
+      "repository": "city96/Qwen-Image-gguf",
+      "quantization": "GGUF Q2_K",
+      "license": "Apache-2.0（模型权重）；GGUF 转换由 city96 提供",
+      "url": "https://modelscope.cn/models/city96/Qwen-Image-gguf/resolve/master/qwen-image-Q2_K.gguf",
+      "official_url": "https://huggingface.co/city96/Qwen-Image-gguf/resolve/main/qwen-image-Q2_K.gguf",
+      "alt_urls": [
+        "https://hf-mirror.com/city96/Qwen-Image-gguf/resolve/main/qwen-image-Q2_K.gguf"
+      ],
+      "target": "models/diffusion_models/qwen-image-Q2_K.gguf",
+      "size_bytes": 7062518304,
+      "size_gib": 6.58,
+      "bundles": ["classic", "all"],
+      "required_for": "Qwen-Image 20B 文生图（10GB 现实档）",
+      "notes": "需要 city96/ComfyUI-GGUF；Q2_K 是 10GB 下能完整驻留的档位，量化越低文字/纹理退化风险越高。Q3_K_M 为 9.02GiB，需动态显存卸载。"
+    },
+    {
+      "id": "qwen-image-edit-2509-gguf-q2k",
+      "filename": "Qwen-Image-Edit-2509-Q2_K.gguf",
+      "role": "diffusion_model",
+      "architecture": "Qwen-Image-Edit-2509 (20B)",
+      "source_type": "community-quant",
+      "source_type_note": "社区 GGUF 量化；模型权重 Apache-2.0，量化文件由 QuantStack 生成",
+      "repository": "QuantStack/Qwen-Image-Edit-2509-GGUF",
+      "quantization": "GGUF Q2_K",
+      "license": "Apache-2.0（模型权重）；GGUF 转换由 QuantStack 提供",
+      "url": "https://modelscope.cn/models/QuantStack/Qwen-Image-Edit-2509-GGUF/resolve/master/Qwen-Image-Edit-2509-Q2_K.gguf",
+      "official_url": "https://huggingface.co/QuantStack/Qwen-Image-Edit-2509-GGUF/resolve/main/Qwen-Image-Edit-2509-Q2_K.gguf",
+      "alt_urls": [
+        "https://hf-mirror.com/QuantStack/Qwen-Image-Edit-2509-GGUF/resolve/main/Qwen-Image-Edit-2509-Q2_K.gguf"
+      ],
+      "target": "models/diffusion_models/Qwen-Image-Edit-2509-Q2_K.gguf",
+      "size_bytes": 7147452960,
+      "size_gib": 6.66,
+      "bundles": ["edit2509", "all"],
+      "required_for": "Qwen-Image-Edit-2509 参考图编辑（10GB 现实档）",
+      "notes": "需要 city96/ComfyUI-GGUF；支持 1-3 张参考图最佳，10GB 下先用单图 1024 级别测试。Q3_K_M 为 9.09GiB，更容易 OOM。"
+    },
+    {
+      "id": "qwen25vl-text-encoder-fp8",
+      "filename": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "role": "text_encoder",
+      "architecture": "Qwen2.5-VL 7B",
+      "source_type": "official-comfyorg",
+      "source_type_note": "Comfy-Org 官方转换/打包仓库，非 Qwen 官方权重仓库",
+      "repository": "Comfy-Org/Qwen-Image",
+      "quantization": "fp8_e4m3fn_scaled",
+      "license": "Apache-2.0",
+      "url": "https://modelscope.cn/models/Comfy-Org/Qwen-Image/resolve/master/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "official_url": "https://huggingface.co/Comfy-Org/Qwen-Image/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "alt_urls": [
+        "https://hf-mirror.com/Comfy-Org/Qwen-Image/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors"
+      ],
+      "target": "models/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "size_bytes": 9384670680,
+      "size_gib": 8.74,
+      "bundles": ["classic", "edit2509", "all"],
+      "required_for": "Qwen-Image 20B 与 Qwen-Image-Edit-2509",
+      "notes": "CLIPLoader 的 type 选 qwen_image；不要用于 Qwen-Image-2.1（2.1 需要 Qwen3-VL 8B）。"
+    },
+    {
+      "id": "qwen-image-vae",
+      "filename": "qwen_image_vae.safetensors",
+      "role": "vae",
+      "architecture": "Qwen-Image / Qwen-Image-Edit-2509 VAE",
+      "source_type": "official-comfyorg",
+      "source_type_note": "Comfy-Org 官方转换/打包仓库，非 Qwen 官方权重仓库",
+      "repository": "Comfy-Org/Qwen-Image",
+      "quantization": "bf16",
+      "license": "Apache-2.0",
+      "url": "https://modelscope.cn/models/Comfy-Org/Qwen-Image/resolve/master/split_files/vae/qwen_image_vae.safetensors",
+      "official_url": "https://huggingface.co/Comfy-Org/Qwen-Image/resolve/main/split_files/vae/qwen_image_vae.safetensors",
+      "alt_urls": [
+        "https://hf-mirror.com/Comfy-Org/Qwen-Image/resolve/main/split_files/vae/qwen_image_vae.safetensors"
+      ],
+      "target": "models/vae/qwen_image_vae.safetensors",
+      "size_bytes": 253806246,
+      "size_gib": 0.24,
+      "bundles": ["classic", "edit2509", "all"],
+      "required_for": "Qwen-Image 20B 与 Qwen-Image-Edit-2509",
+      "notes": "20B 系列共用 VAE；不要与 qwen_image_2.1_vae_bf16.safetensors 混用。"
+    }
+  ]
+}

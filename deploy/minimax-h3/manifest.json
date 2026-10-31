@@ -1,0 +1,323 @@
+{
+  "package": "minimax-h3",
+  "packageName": "MiniMax H3 视频部署包（ComfyUI / Windows 11 / RTX 3080 10GB）",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-10-29",
+  "verifiedAt": "2026-10-29",
+  "scope": "只下载四个模型文件，不安装、不克隆、不运行 ComfyUI、不改驱动",
+  "environment": {
+    "cpu": "Intel Core i7-13700KF (16C/24T)",
+    "gpu": "NVIDIA GeForce RTX 3080 10240MiB",
+    "ram": "32GB DDR4-3600 (约 31.9GiB 可用)",
+    "os": "Windows 11 专业版 64 位 22631",
+    "currentDriver": "560.94",
+    "systemDriveFreeGiB": 35.8,
+    "dataDriveFreeGiB": 672.4
+  },
+  "requirements": {
+    "comfyui": {
+      "minimumVersion": "0.36.0",
+      "recommendedVersion": "0.43.0",
+      "notes": [
+        "原生 H3 支持自 v0.30.0（2026-08-03，PR #15224）起",
+        "int8_convrot VAE 支持自 v0.31.0（2026-08-08，PR #15334）起，本包 VAE 即此格式",
+        "VAE 显存与速度优化在 v0.36.0（2026-09-15，PR #16187 / #16332）",
+        "当前稳定版 v0.43.0（2026-10-27）",
+        "最低版本号为依据官方 Release Notes 推断，社区工作流未给具体版本号"
+      ],
+      "sourceUrl": "https://github.com/Comfy-Org/ComfyUI/releases"
+    },
+    "driver": {
+      "minimumMajorVersion": 580,
+      "reason": "Portable 自带 PyTorch CUDA 13.0，NVIDIA 兼容表规定 CUDA 13.x 要求驱动 >= 580",
+      "currentMachineCompliant": false,
+      "notes": "当前 560.94 不满足，必须先升级到 580 系列或更新并重启",
+      "sourceUrl": "https://docs.nvidia.com/deploy/cuda-compatibility/minor-version-compatibility.html"
+    },
+    "installLocation": {
+      "portableRoot": "D:\\LocalAI\\video\\ComfyUI_windows_portable",
+      "modelsRoot": "D:\\LocalAI\\video\\ComfyUI_windows_portable\\ComfyUI\\models",
+      "extractTool": "7-Zip",
+      "notes": "官方 Portable 说明页给出 ComfyUI_windows_portable 目录结构，含 python_embeded 与 run_nvidia_gpu.bat",
+      "sourceUrl": "https://docs.comfy.org/installation/comfyui_portable_windows"
+    },
+    "disk": {
+      "modelsTotalBytes": 21590132744,
+      "modelsTotalHuman": "20.11 GiB",
+      "recommendedFreeGiB": 40
+    }
+  },
+  "plugins": [
+    {
+      "name": "ComfyUI-ClipProj",
+      "url": "https://github.com/nicolab28/ComfyUI-ClipProj",
+      "targetDir": "ComfyUI_windows_portable\\ComfyUI\\custom_nodes\\ComfyUI-ClipProj",
+      "minimumVersion": "0.1.13",
+      "providesNodes": ["ClipProjApply", "ClipProjLoader", "ClipProjDeviceLoader", "ClipProjGenerate", "ClipProjFree"],
+      "license": "见仓库 LICENSE",
+      "sourceType": "社区",
+      "verified": {
+        "httpStatus": 200,
+        "checkedAt": "2026-10-29",
+        "method": "HEAD 请求 + raw README/pyproject 读取"
+      },
+      "notes": "pyproject.toml 的 version 为 0.1.13，但 Git tag 只到 v0.1.4（标签未同步）；判断版本要看 pyproject.toml，不要看 tag。0.1.13 之前的版本加载 -v3-mlp 矩阵会抛 KeyError: 'W'。"
+    },
+    {
+      "name": "ComfyUI-Spectrum-MiniMax-H3",
+      "url": "https://github.com/xmarre/ComfyUI-Spectrum-MiniMax-H3",
+      "targetDir": "ComfyUI_windows_portable\\ComfyUI\\custom_nodes\\ComfyUI-Spectrum-MiniMax-H3",
+      "currentVersion": "0.2.29",
+      "providesNodes": ["SpectrumApplyMiniMaxH3"],
+      "license": "GPL-3.0-or-later",
+      "sourceType": "社区",
+      "verified": {
+        "httpStatus": 200,
+        "checkedAt": "2026-10-29",
+        "method": "HEAD 请求 + raw README/pyproject 读取"
+      },
+      "notes": "近似加速器，会改变去噪轨迹，同种子输出也可能不同。pyproject 的 dependencies 为空，无额外 pip 依赖。先关掉跑基线，再开启对比。"
+    }
+  ],
+  "workflows": [
+    {
+      "name": "MiniMax H3 FL2V 8GB VRAM 首尾帧工作流",
+      "url": "https://github.com/reventadirecta/MiniMax-H3-ComfyUI-8GB-VRAM/blob/main/workflows/MiniMax_H3_FL2V_8GB_VRAM.json",
+      "rawUrl": "https://raw.githubusercontent.com/reventadirecta/MiniMax-H3-ComfyUI-8GB-VRAM/main/workflows/MiniMax_H3_FL2V_8GB_VRAM.json",
+      "sourceType": "社区",
+      "nodeCount": 18,
+      "verified": {
+        "httpStatus": 200,
+        "checkedAt": "2026-10-29",
+        "method": "HEAD 请求 + 下载 JSON 逐节点解析（未在 ComfyUI 中运行）"
+      },
+      "defaults": {
+        "width": 608,
+        "height": 352,
+        "lengthFrames": 124,
+        "fps": 24,
+        "steps": 20,
+        "sampler": "euler",
+        "scheduler": "simple",
+        "denoise": 1.0,
+        "sigmaShiftVideo": 12.0,
+        "sigmaShiftAudio": 3.0,
+        "outputPrefix": "video/MiniMax_H3_FL2V_8GB_608x352"
+      },
+      "notes": "CreateVideo 的 audio 输入未接线，输出为无声视频。两个 LoadImage 节点使用占位文件名 first_frame.png / last_frame.png，仓库不含真实图片，必须替换。"
+    }
+  ],
+  "models": [
+    {
+      "id": "h3-fl2va-w4a8",
+      "role": "H3 FL2VA 扩散模型（W4A8 混合量化）",
+      "filename": "minimax_h3_fl2va_pruned_w4a8_mixed.safetensors",
+      "url": "https://huggingface.co/Kijai/MiniMax-H3-experimental/resolve/main/minimax_h3_fl2va_pruned_w4a8_mixed.safetensors",
+      "mirrorUrl": "https://hf-mirror.com/Kijai/MiniMax-H3-experimental/resolve/main/minimax_h3_fl2va_pruned_w4a8_mixed.safetensors",
+      "sourcePage": "https://huggingface.co/Kijai/MiniMax-H3-experimental",
+      "sourceType": "社区",
+      "targetDir": "models\\diffusion_models",
+      "targetPathFromTargetRoot": "ComfyUI_windows_portable\\ComfyUI\\models\\diffusion_models\\minimax_h3_fl2va_pruned_w4a8_mixed.safetensors",
+      "sizeBytes": 12540858008,
+      "sizeGiB": 11.68,
+      "sha256": "01aa7b92c007c599890461c325f9b7e3c96fb06c36f242f95b62f7f20e538dec",
+      "loaderNode": "UNETLoader",
+      "loaderSettings": "weight_dtype = default",
+      "verified": {
+        "httpStatus": 200,
+        "contentLength": 12540858008,
+        "checkedAt": "2026-10-29",
+        "method": "HEAD 请求返回 Content-Length 与仓库元数据一致；未下载文件本体"
+      },
+      "notes": "starsfriday/MiniMax-H3-w4a8 有同名同字节数文件，但 SHA-256 为 29d0a0e4be82dacdc4a5849bf756c2b32d34131f7a18f9aac754e16a2e215eb5，与本文件不是同一份字节。换源必须删除半成品重下，curl -C - 续传会把两个不同文件续接成坏文件。"
+    },
+    {
+      "id": "qwen3vl-4b-int8",
+      "role": "Qwen3-VL 4B 文本编码器（int8 convrot）",
+      "filename": "qwen3vl_4b_int8_convrot.safetensors",
+      "url": "https://huggingface.co/Stick9190/qwen3vl_4b_int8_convrot/resolve/main/qwen3vl_4b_int8_convrot.safetensors",
+      "mirrorUrl": "https://hf-mirror.com/Stick9190/qwen3vl_4b_int8_convrot/resolve/main/qwen3vl_4b_int8_convrot.safetensors",
+      "sourcePage": "https://huggingface.co/Stick9190/qwen3vl_4b_int8_convrot",
+      "sourceType": "社区",
+      "targetDir": "models\\text_encoders",
+      "targetPathFromTargetRoot": "ComfyUI_windows_portable\\ComfyUI\\models\\text_encoders\\qwen3vl_4b_int8_convrot.safetensors",
+      "sizeBytes": 5374169456,
+      "sizeGiB": 5.01,
+      "sha256": "ebbb3efdf4a6e1b766e32f6dc4fa92af9530edede0968c070b3e604aeca413aa",
+      "loaderNode": "CLIPLoader",
+      "loaderSettings": "type = krea2, device = default",
+      "verified": {
+        "httpStatus": 200,
+        "contentLength": 5374169456,
+        "checkedAt": "2026-10-29",
+        "method": "HEAD 请求返回 Content-Length 与仓库元数据一致；未下载文件本体"
+      },
+      "notes": "必须与 4B 的 ClipProj 矩阵配对。4B 输出 2560 维、8B 输出 4096 维，节点会拒绝维度不匹配。官方 H3-Encoder 是 Qwen3-VL-32B 第 50 层隐状态，此处用 4B 替代，占用从 15.7GB 降到 5.2GB（ClipProj README 数据）。"
+    },
+    {
+      "id": "clipproj-4b-v3-mlp",
+      "role": "H3 ClipProj 4B 投影矩阵（v3-mlp）",
+      "filename": "mmh3-4b-ClipProj-v3-mlp.safetensors",
+      "url": "https://huggingface.co/NicoLab28/ClipProj-MiniMax-H3/resolve/main/mmh3-4b-ClipProj-v3-mlp.safetensors",
+      "mirrorUrl": "https://hf-mirror.com/NicoLab28/ClipProj-MiniMax-H3/resolve/main/mmh3-4b-ClipProj-v3-mlp.safetensors",
+      "sourcePage": "https://huggingface.co/NicoLab28/ClipProj-MiniMax-H3",
+      "sourceType": "社区",
+      "targetDir": "models\\clip_projections",
+      "targetPathFromTargetRoot": "ComfyUI_windows_portable\\ComfyUI\\models\\clip_projections\\mmh3-4b-ClipProj-v3-mlp.safetensors",
+      "sizeBytes": 503434368,
+      "sizeGiB": 0.47,
+      "sha256": "feef06ef3b9aede3b1f3331b71eebbc873e21a867d73bcf40ea2c0b007270693",
+      "loaderNode": "ClipProjApply",
+      "loaderSettings": "接在 CLIPLoader(krea2) 之后、MiniMaxH3ImageToVideo 之前",
+      "verified": {
+        "httpStatus": 200,
+        "contentLength": 503434368,
+        "checkedAt": "2026-10-29",
+        "method": "HEAD 请求返回 Content-Length 与仓库元数据一致；未下载文件本体"
+      },
+      "notes": "models\\clip_projections 目录由插件首次启动时自动创建。-mlp 文件只带非线性残差、不含线性矩阵 W，所以旧版插件报 KeyError: 'W' 是版本问题不是文件损坏；日志显示 residual only 属正常。需要 ClipProj >= 0.1.13。"
+    },
+    {
+      "id": "h3-video-vae-int8",
+      "role": "H3 视频 VAE（int8 convrot）",
+      "filename": "minimax_h3_video_vae_int8_convrot.safetensors",
+      "url": "https://huggingface.co/Kijai/MiniMax-H3-experimental/resolve/main/minimax_h3_video_vae_int8_convrot.safetensors",
+      "mirrorUrl": "https://hf-mirror.com/Kijai/MiniMax-H3-experimental/resolve/main/minimax_h3_video_vae_int8_convrot.safetensors",
+      "sourcePage": "https://huggingface.co/Kijai/MiniMax-H3-experimental",
+      "sourceType": "社区",
+      "targetDir": "models\\vae",
+      "targetPathFromTargetRoot": "ComfyUI_windows_portable\\ComfyUI\\models\\vae\\minimax_h3_video_vae_int8_convrot.safetensors",
+      "sizeBytes": 3171670912,
+      "sizeGiB": 2.95,
+      "sha256": "9bb2d96f218c76babd85e0611b85ca8fb330a90546c01a0005e8a58a59593410",
+      "loaderNode": "VAELoader",
+      "loaderSettings": "同时供 MiniMaxH3ImageToVideo 的 vae 输入与 VAEDecode",
+      "verified": {
+        "httpStatus": 200,
+        "contentLength": 3171670912,
+        "checkedAt": "2026-10-29",
+        "method": "HEAD 请求返回 Content-Length 与仓库元数据一致；未下载文件本体"
+      },
+      "notes": "int8_convrot VAE 格式需 ComfyUI >= 0.31.0。这是视频 VAE，工作流不需要音频 VAE。"
+    }
+  ],
+  "totalSizeBytes": 21590132744,
+  "totalSizeHuman": "20.11 GiB",
+  "acceptance": {
+    "profile": "low-vram first-light",
+    "width": 608,
+    "height": 352,
+    "lengthFrames": 124,
+    "fps": 24,
+    "steps": 20,
+    "sampler": "euler",
+    "scheduler": "simple",
+    "runs": 3,
+    "seeds": [42, 43, 44],
+    "recordFields": [
+      "序号",
+      "种子",
+      "开始时间",
+      "结束时间",
+      "总耗时",
+      "峰值显存 MiB",
+      "系统可用内存最低值 MB",
+      "输出文件",
+      "文件大小",
+      "可播放",
+      "备注"
+    ],
+    "passCriteria": [
+      "三条全部跑完，无 OOM、无进程崩溃",
+      "三个 mp4 均可正常播放，时长约 5 秒，非全黑/全噪点",
+      "第 3 条耗时相对第 1 条无明显恶化"
+    ],
+    "noSpeedGuarantee": true,
+    "notes": "608x352 是社区低分辨率测试尺寸，不是标准 480p，也不是官方 768 短边默认值。124 = 17x7+5，落在模型 17k+5 帧网格上。社区建议不要用 25 步。"
+  },
+  "launchArgs": {
+    "recommended": "--windows-standalone-build --lowvram --fp16-vae --vram-headroom 0.8 --listen 127.0.0.1",
+    "effectiveKnobs": ["--vram-headroom", "--reserve-vram", "--disable-smart-memory", "--fast-disk"],
+    "caveats": [
+      "--lowvram 官方 help：动态显存启用时无作用；当前 ComfyUI 动态显存默认开启，故基本是空操作",
+      "--fp16-vae 官方 help：might cause black images；出现全黑先去掉该参数",
+      "--cpu-vae 社区明确要求不要加",
+      "运行前必须停止本地语言模型：ollama stop qwen3:8b-q4_K_M"
+    ],
+    "sourceUrl": "https://github.com/Comfy-Org/ComfyUI/blob/master/comfy/cli_args.py"
+  },
+  "inputModes": [
+    {
+      "mode": "纯文生 t2va",
+      "node": "MiniMaxH3ImageToVideo",
+      "inputs": "仅 prompt，first_frame 与 last_frame 均不接",
+      "availableInThisPackage": true
+    },
+    {
+      "mode": "单图生视频",
+      "node": "MiniMaxH3ImageToVideo",
+      "inputs": "prompt + 1 张图（只接 first_frame 或只接 last_frame）",
+      "availableInThisPackage": true
+    },
+    {
+      "mode": "首尾帧 fl2va",
+      "node": "MiniMaxH3ImageToVideo",
+      "inputs": "prompt + 2 张图（first_frame 与 last_frame 都接）",
+      "availableInThisPackage": true
+    },
+    {
+      "mode": "多模态参考 ref2va",
+      "node": "MiniMaxH3ReferenceToVideo",
+      "inputs": "prompt + <=9 图 / <=3 视频（每条 2-15s，合计 <=15s）/ <=3 音频，文件合计 <=12",
+      "availableInThisPackage": false,
+      "notes": "需要另下 minimax_h3_ref2va_pruned_w4a8_mixed.safetensors（11770657048 字节，约 10.96 GiB，Kijai 同一仓库），本包不下载；对应工作流未核实"
+    }
+  ],
+  "troubleshooting": [
+    "驱动/CUDA：nvidia-smi 驱动 <580 即驱动问题，先升驱动再动模型",
+    "缺节点：ClipProjApply / SpectrumApplyMiniMaxH3 缺插件；MiniMaxH3ImageToVideo / MiniMaxH3SigmaShift / ModelAttentionBackend 缺 ComfyUI 版本；装完必须重启",
+    "量化不识别：核对文件名、ComfyUI 版本、weight_dtype=default、SHA-256；不要把格式错误一律当文件损坏",
+    "ClipProj KeyError: W：插件 <0.1.13 或 4B/8B 矩阵与编码器不匹配；看 pyproject.toml 的 version，不要看 Git tag",
+    "显存/内存不足：停语言模型、降分辨率/帧数、加 --vram-headroom 或 --disable-smart-memory；VAE decode OOM 可试 VAEDecodeTiled",
+    "Spectrum：旁路节点跑基线；更新到最新；注意它是近似加速器会改变输出，且 steps 不等于 H3 模型调用次数"
+  ],
+  "notVerified": [
+    "huggingface.co 直连可达性：本机被代理拦截（CONNECT tunnel failed, response 502），大小与哈希经 hf-mirror.com 元数据与 HEAD 核实，未与官方域名逐字节比对",
+    "ComfyUI 最低版本号：>=0.36 为依据官方 Release Notes 的推断，社区工作流未给具体版本",
+    "本机实际能否跑通：未运行 ComfyUI、未占用 GPU，无任何实测耗时或显存数据",
+    "Ref2VA 工作流：未核实节点连线与参数",
+    "输出 mp4 文件体积：未核实",
+    "--fp16-vae 与 int8 convrot VAE 的组合行为：官方仅说明 fp16 VAE 可能黑图",
+    "comfy-kitchen 是否随 Portable 预装：未核实；缺失时 ModelAttentionBackend 会回退 pytorch attention"
+  ],
+  "risks": [
+    "同名不同源：fl2va 权重在 Kijai 与 starsfriday 同名同大小但 SHA-256 不同，混用或换源续传会产生坏文件",
+    "社区实测硬件为 RTX 4060 Laptop 8GB / 16GB 内存，与 3080 10GB / 32GB 不同，不能外推成功率与耗时",
+    "608x352 不是画质基准，跑通不代表 720p 可用",
+    "Spectrum 破坏可复现性",
+    "驱动升级是硬前置且属系统级变更，本包不代做、无回滚方案",
+    "四个模型文件均为社区产物，商用范围需自行确认 MiniMax H3 Community License 与各模型卡"
+  ],
+  "sources": [
+    { "type": "官方", "title": "MiniMax H3 官方仓库", "url": "https://github.com/MiniMax-AI/MiniMax-H3", "accessedAt": "2026-10-29" },
+    { "type": "官方", "title": "MiniMax H3 官方模型卡", "url": "https://huggingface.co/MiniMaxAI/MiniMax-H3", "accessedAt": "2026-10-29" },
+    { "type": "官方", "title": "ComfyUI 系统要求", "url": "https://docs.comfy.org/installation/system_requirements", "accessedAt": "2026-10-29" },
+    { "type": "官方", "title": "ComfyUI Portable Windows 说明", "url": "https://docs.comfy.org/installation/comfyui_portable_windows", "accessedAt": "2026-10-29" },
+    { "type": "官方", "title": "NVIDIA CUDA 驱动兼容表", "url": "https://docs.nvidia.com/deploy/cuda-compatibility/minor-version-compatibility.html", "accessedAt": "2026-10-29" },
+    { "type": "官方", "title": "ComfyUI Releases", "url": "https://github.com/Comfy-Org/ComfyUI/releases", "accessedAt": "2026-10-29" },
+    { "type": "官方", "title": "ComfyUI 启动参数定义", "url": "https://github.com/Comfy-Org/ComfyUI/blob/master/comfy/cli_args.py", "accessedAt": "2026-10-29" },
+    { "type": "官方", "title": "ComfyUI 原生 H3 节点", "url": "https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_minimax_h3.py", "accessedAt": "2026-10-29" },
+    { "type": "官方", "title": "ComfyUI ModelAttentionBackend 节点", "url": "https://github.com/Comfy-Org/ComfyUI/blob/master/comfy_extras/nodes_model_advanced.py", "accessedAt": "2026-10-29" },
+    { "type": "官方", "title": "comfy-kitchen 内核库", "url": "https://github.com/Comfy-Org/comfy-kitchen", "accessedAt": "2026-10-29" },
+    { "type": "社区", "title": "Kijai H3 实验仓库", "url": "https://huggingface.co/Kijai/MiniMax-H3-experimental", "accessedAt": "2026-10-29" },
+    { "type": "社区", "title": "Stick9190 Qwen3-VL 4B int8 编码器", "url": "https://huggingface.co/Stick9190/qwen3vl_4b_int8_convrot", "accessedAt": "2026-10-29" },
+    { "type": "社区", "title": "NicoLab28 ClipProj 矩阵", "url": "https://huggingface.co/NicoLab28/ClipProj-MiniMax-H3", "accessedAt": "2026-10-29" },
+    { "type": "社区", "title": "ComfyUI-ClipProj 插件", "url": "https://github.com/nicolab28/ComfyUI-ClipProj", "accessedAt": "2026-10-29" },
+    { "type": "社区", "title": "ComfyUI-Spectrum-MiniMax-H3 插件", "url": "https://github.com/xmarre/ComfyUI-Spectrum-MiniMax-H3", "accessedAt": "2026-10-29" },
+    { "type": "社区", "title": "8GB 工作流仓库", "url": "https://github.com/reventadirecta/MiniMax-H3-ComfyUI-8GB-VRAM", "accessedAt": "2026-10-29" },
+    { "type": "社区", "title": "工作流 JSON", "url": "https://github.com/reventadirecta/MiniMax-H3-ComfyUI-8GB-VRAM/blob/main/workflows/MiniMax_H3_FL2V_8GB_VRAM.json", "accessedAt": "2026-10-29" },
+    { "type": "社区", "title": "工作流模型清单", "url": "https://github.com/reventadirecta/MiniMax-H3-ComfyUI-8GB-VRAM/blob/main/docs/MODELS.md", "accessedAt": "2026-10-29" },
+    { "type": "社区", "title": "工作流安装说明", "url": "https://github.com/reventadirecta/MiniMax-H3-ComfyUI-8GB-VRAM/blob/main/docs/INSTALLATION.md", "accessedAt": "2026-10-29" },
+    { "type": "社区", "title": "starsfriday W4A8 备选源", "url": "https://huggingface.co/starsfriday/MiniMax-H3-w4a8", "accessedAt": "2026-10-29" }
+  ]
+}
